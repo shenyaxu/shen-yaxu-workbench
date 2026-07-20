@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: shen-yaxu-workbench
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: JWT_SECRET
+        generateValue: true
+        sync: false
+      - key: PORT
+        value: 10000
+    plan: free

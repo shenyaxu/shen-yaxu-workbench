@@ -1,0 +1,2866 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>申亚旭工作台</title>
+  <style>
+    :root {
+      --bg: #f5f8f4;
+      --panel: #ffffff;
+      --panel-soft: #f7fbf6;
+      --text: #334039;
+      --muted: #748278;
+      --line: #dbe8dc;
+      --brand: #8fb69a;
+      --brand-dark: #5f8269;
+      --green: #5f9274;
+      --yellow: #a9845c;
+      --red: #bd6f78;
+      --purple: #789485;
+      --shadow: 0 18px 50px rgba(55, 83, 62, 0.08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(143, 182, 154, 0.18), transparent 34rem),
+        radial-gradient(circle at bottom right, rgba(190, 215, 192, 0.24), transparent 30rem),
+        var(--bg);
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      border: 0;
+    }
+
+    /* ==================== 登录页面样式 ==================== */
+    .login-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background:
+        radial-gradient(circle at top left, rgba(143, 182, 154, 0.18), transparent 34rem),
+        radial-gradient(circle at bottom right, rgba(190, 215, 192, 0.24), transparent 30rem),
+        var(--bg);
+    }
+
+    .login-card {
+      width: min(400px, 100%);
+      padding: 40px 32px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(219, 232, 220, 0.9);
+      border-radius: 22px;
+      box-shadow: 0 28px 80px rgba(45, 64, 50, 0.15);
+      text-align: center;
+    }
+
+    .login-card .brand-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      display: inline-grid;
+      place-items: center;
+      color: white;
+      font-size: 28px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--brand), #b8d2bc);
+      box-shadow: 0 10px 24px rgba(143, 182, 154, 0.28);
+      margin-bottom: 16px;
+    }
+
+    .login-card h1 {
+      margin: 0 0 6px;
+      font-size: 22px;
+    }
+
+    .login-card p {
+      margin: 0 0 28px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .login-form .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      text-align: left;
+      margin-bottom: 16px;
+    }
+
+    .login-form label {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .login-form input {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 14px;
+      color: var(--text);
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      outline: none;
+      transition: 0.16s ease;
+    }
+
+    .login-form input:focus {
+      border-color: rgba(143, 182, 154, 0.58);
+      box-shadow: 0 0 0 4px rgba(143, 182, 154, 0.14);
+    }
+
+    .login-error {
+      color: var(--red);
+      font-size: 13px;
+      margin-bottom: 12px;
+      min-height: 20px;
+    }
+
+    .login-btn {
+      width: 100%;
+      min-height: 44px;
+      padding: 12px;
+      border-radius: 12px;
+      background: var(--brand);
+      border-color: var(--brand);
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      box-shadow: 0 5px 14px rgba(55, 83, 62, 0.08);
+      transition: 0.18s ease;
+    }
+
+    .login-btn:hover {
+      background: var(--brand-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 9px 18px rgba(55, 83, 62, 0.12);
+    }
+
+    .login-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ==================== 修改密码弹窗样式 ==================== */
+    .modal-mask {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(45, 64, 50, 0.40);
+      z-index: 20;
+    }
+
+    .modal-mask.show {
+      display: flex;
+    }
+
+    .modal {
+      width: min(760px, 100%);
+      max-height: 92vh;
+      overflow: auto;
+      background: white;
+      border-radius: 22px;
+      box-shadow: 0 28px 80px rgba(45, 64, 50, 0.22);
+    }
+
+    .password-modal {
+      width: min(440px, 100%);
+      padding: 32px 28px 28px;
+    }
+
+    .password-modal h3 {
+      margin: 0 0 6px;
+      font-size: 20px;
+      text-align: center;
+    }
+
+    .password-modal .password-desc {
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+      margin: 0 0 24px;
+    }
+
+    .password-modal .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-bottom: 16px;
+    }
+
+    .password-modal label {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .password-modal input {
+      width: 100%;
+      min-height: 42px;
+      padding: 10px 12px;
+      color: var(--text);
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      outline: none;
+      transition: 0.16s ease;
+    }
+
+    .password-modal input:focus {
+      border-color: rgba(143, 182, 154, 0.58);
+      box-shadow: 0 0 0 4px rgba(143, 182, 154, 0.14);
+    }
+
+    .password-modal .password-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .password-error {
+      color: var(--red);
+      font-size: 13px;
+      text-align: center;
+      min-height: 20px;
+      margin-bottom: 8px;
+    }
+
+    /* ==================== 主应用样式 ==================== */
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 24px 18px;
+      background: rgba(255, 255, 255, 0.86);
+      backdrop-filter: blur(16px);
+      border-right: 1px solid rgba(219, 232, 220, 0.9);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 24px;
+      padding: 10px 8px;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 22px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--brand), #b8d2bc);
+      box-shadow: 0 10px 24px rgba(143, 182, 154, 0.28);
+    }
+
+    .brand h1 {
+      font-size: 18px;
+      margin: 0 0 3px;
+    }
+
+    .brand p {
+      font-size: 12px;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .nav-title {
+      margin: 18px 10px 8px;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    .nav-button {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 6px 0;
+      padding: 12px 12px;
+      color: var(--text);
+      background: transparent;
+      border-radius: 14px;
+      text-align: left;
+      transition: 0.18s ease;
+    }
+
+    .nav-button:hover {
+      background: rgba(143, 182, 154, 0.12);
+    }
+
+    .nav-button.active {
+      color: var(--brand-dark);
+      background: rgba(143, 182, 154, 0.18);
+      font-weight: 700;
+    }
+
+    .nav-count {
+      margin-left: auto;
+      font-size: 12px;
+      color: var(--muted);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 2px 8px;
+    }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+    }
+
+    .sidebar-bottom .nav-button {
+      color: var(--muted);
+      font-size: 13px;
+      padding: 10px 12px;
+    }
+
+    .sidebar-bottom .nav-button:hover {
+      color: var(--text);
+      background: rgba(143, 182, 154, 0.08);
+    }
+
+    .privacy-note {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 16px;
+      background: #eef7ef;
+      color: #5f8269;
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .main {
+      padding: 28px;
+      min-width: 0;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 22px;
+    }
+
+    .topbar h2 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      letter-spacing: -0.02em;
+    }
+
+    .topbar p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 760px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      min-height: 40px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: var(--panel);
+      color: var(--text);
+      border: 1px solid var(--line);
+      box-shadow: 0 5px 14px rgba(55, 83, 62, 0.04);
+      transition: 0.18s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 9px 18px rgba(55, 83, 62, 0.08);
+    }
+
+    .btn.primary {
+      background: var(--brand);
+      border-color: var(--brand);
+      color: white;
+    }
+
+    .btn.danger {
+      color: var(--red);
+      border-color: rgba(189, 111, 120, 0.24);
+      background: #fff5f6;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .metric {
+      padding: 18px;
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(219, 232, 220, 0.9);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 28px;
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(219, 232, 220, 0.9);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .panel-head {
+      display: flex;
+      gap: 14px;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-head h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: minmax(180px, 1fr) 170px 150px 150px;
+      gap: 10px;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(247, 251, 246, 0.9);
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    label {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      min-height: 42px;
+      padding: 10px 12px;
+      color: var(--text);
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      outline: none;
+      transition: 0.16s ease;
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+      line-height: 1.65;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: rgba(143, 182, 154, 0.58);
+      box-shadow: 0 0 0 4px rgba(143, 182, 154, 0.14);
+    }
+
+    .module-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 16px 18px 4px;
+    }
+
+    .chip {
+      padding: 8px 11px;
+      border-radius: 999px;
+      color: #647469;
+      background: #eef6ee;
+      border: 1px solid var(--line);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .chip:hover {
+      background: var(--brand-light, #d8e8d8);
+      border-color: var(--brand);
+      color: #3a5a40;
+    }
+
+    .chip.active {
+      color: white;
+      background: var(--brand);
+      border-color: var(--brand);
+      box-shadow: 0 2px 8px rgba(58, 90, 64, 0.3);
+    }
+
+    .tag-picker {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+      padding: 10px;
+      border: 1px dashed var(--line);
+      border-radius: 14px;
+      background: #fbfef9;
+    }
+
+    .tag-option {
+      padding: 6px 10px;
+      border-radius: 999px;
+      color: #647469;
+      background: #eef6ee;
+      border: 1px solid var(--line);
+      font-size: 13px;
+    }
+
+    .tag-option.active {
+      color: white;
+      background: var(--brand);
+      border-color: var(--brand);
+    }
+
+    .tag-empty {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .records {
+      display: grid;
+      gap: 12px;
+      padding: 18px;
+    }
+
+    .record-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: white;
+    }
+
+    .record-card h4 {
+      margin: 0 0 8px;
+      font-size: 17px;
+    }
+
+    .record-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #eef6ee;
+      color: #647469;
+      font-size: 12px;
+    }
+
+    .badge.green {
+      background: #edf7f3;
+      color: var(--green);
+    }
+
+    .badge.yellow {
+      background: #fff6e9;
+      color: var(--yellow);
+    }
+
+    .badge.red {
+      background: #fff0f2;
+      color: var(--red);
+    }
+
+    .badge.purple {
+      background: #eef5f0;
+      color: var(--purple);
+    }
+
+    .record-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+      white-space: pre-wrap;
+    }
+
+    .record-actions {
+      display: flex;
+      gap: 8px;
+      align-items: start;
+    }
+
+    .icon-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: var(--panel-soft);
+      color: var(--muted);
+      border: 1px solid var(--line);
+    }
+
+    .empty {
+      padding: 48px 18px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .loading {
+      padding: 48px 18px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 22px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .modal-head h3 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      padding: 20px 22px;
+    }
+
+    .form-grid .wide {
+      grid-column: 1 / -1;
+    }
+
+    .modal-foot {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 16px 22px 22px;
+    }
+
+    .summary-box {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin: 0 0 20px;
+    }
+
+    .summary-card {
+      padding: 18px;
+      border-radius: var(--radius);
+      background: white;
+      border: 1px solid var(--line);
+      box-shadow: 0 10px 30px rgba(55, 83, 62, 0.05);
+    }
+
+    .summary-card h3 {
+      margin: 0 0 12px;
+      font-size: 16px;
+    }
+
+    .summary-card ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .course-fields,
+    .activity-fields,
+    .counseling-fields {
+      display: none;
+    }
+
+    .course-fields.show,
+    .activity-fields.show,
+    .counseling-fields.show {
+      display: contents;
+    }
+
+    .form-field-hidden {
+      display: none;
+    }
+
+    .help-text {
+      margin: -2px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .link-list,
+    .attachment-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .resource-link,
+    .attachment-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      max-width: 100%;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: #eef7ef;
+      color: var(--brand-dark);
+      font-size: 13px;
+      text-decoration: none;
+      border: 1px solid rgba(143, 182, 154, 0.24);
+    }
+
+    .attachment-pill {
+      background: #f7fbf6;
+      color: #647469;
+      border-color: var(--line);
+    }
+
+    .attachment-remove {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      color: var(--red);
+      background: #fff0f2;
+      border: 1px solid rgba(189, 111, 120, 0.20);
+    }
+
+    .attachment-empty {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .timetable-panel {
+      padding: 18px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(247, 251, 246, 0.84);
+    }
+
+    .timetable-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .timetable-head h3 {
+      margin: 0;
+      font-size: 17px;
+    }
+
+    .timetable-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: white;
+    }
+
+    .timetable {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+    }
+
+    .timetable th,
+    .timetable td {
+      border: 1px solid var(--line);
+      padding: 10px;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .timetable th {
+      background: #f7fbf6;
+      color: #66786b;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .period-cell {
+      width: 82px;
+      color: var(--muted);
+      font-weight: 700;
+      background: #f7fbf6;
+    }
+
+    .lesson-card {
+      display: block;
+      width: 100%;
+      margin: 0 0 7px;
+      padding: 8px;
+      border-radius: 12px;
+      background: #eef7ef;
+      color: #5f8269;
+      text-align: left;
+      border: 1px solid rgba(143, 182, 154, 0.24);
+    }
+
+    .lesson-card strong {
+      display: block;
+      margin-bottom: 3px;
+      color: #4f725c;
+    }
+
+    .lesson-card span {
+      display: block;
+      font-size: 12px;
+      color: #748278;
+      line-height: 1.45;
+    }
+
+    /* 全局加载遮罩 */
+    .app-loading-mask {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(45, 64, 50, 0.20);
+      z-index: 30;
+    }
+
+    .app-loading-mask.show {
+      display: flex;
+    }
+
+    .app-loading-mask .loading-spinner {
+      padding: 20px 32px;
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(55, 83, 62, 0.12);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 1040px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        height: auto;
+      }
+
+      .grid,
+      .summary-box {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 680px) {
+      .main {
+        padding: 18px;
+      }
+
+      .topbar,
+      .panel-head,
+      .record-card {
+        grid-template-columns: 1fr;
+        flex-direction: column;
+      }
+
+      .grid,
+      .summary-box,
+      .filters,
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- ==================== 登录页面 ==================== -->
+  <div class="login-page" id="loginPage">
+    <div class="login-card">
+      <div class="brand-icon">申</div>
+      <h1>申亚旭工作台</h1>
+      <p>课程、辅导、测评与档案管理</p>
+      <form class="login-form" id="loginForm">
+        <div class="field">
+          <label for="loginUsername">账号</label>
+          <input id="loginUsername" type="text" placeholder="请输入账号" required autocomplete="username" />
+        </div>
+        <div class="field">
+          <label for="loginPassword">密码</label>
+          <input id="loginPassword" type="password" placeholder="请输入密码" required autocomplete="current-password" />
+        </div>
+        <div class="login-error" id="loginError"></div>
+        <button class="login-btn" type="submit" id="loginBtn">登 录</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== 主应用 ==================== -->
+  <div class="app" id="appPage" style="display:none;">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">申</div>
+        <div>
+          <h1>申亚旭工作台</h1>
+          <p>课程、辅导、测评与档案管理</p>
+        </div>
+      </div>
+
+      <div class="nav-title">工作模块</div>
+      <nav id="categoryNav"></nav>
+
+      <!-- 侧边栏底部：修改密码和退出登录 -->
+      <div class="sidebar-bottom">
+        <button class="nav-button" id="changePasswordBtn" type="button">
+          <span>🔑</span>
+          <span>修改密码</span>
+        </button>
+        <button class="nav-button" id="logoutBtn" type="button">
+          <span>🚪</span>
+          <span>退出登录</span>
+        </button>
+      </div>
+
+      <div class="privacy-note">
+        数据保存在云端服务器，请使用个人设备登录。涉及学生隐私时，建议定期导出备份并妥善保存。
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="topbar">
+        <div>
+          <h2 id="pageTitle">工作概览</h2>
+          <p id="pageDescription">集中管理心理健康教育相关事项，支持记录、跟进、检索、导入和导出。</p>
+        </div>
+        <div class="actions">
+          <button class="btn" id="exportBtn">导出备份</button>
+          <button class="btn" id="importBtn">导入备份</button>
+          <button class="btn primary" id="newBtn">新增记录</button>
+          <input class="file-input" type="file" id="importFile" accept="application/json" />
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="metric">
+          <span>全部记录</span>
+          <strong id="totalCount">0</strong>
+        </div>
+        <div class="metric">
+          <span>本月新增</span>
+          <strong id="monthCount">0</strong>
+        </div>
+        <div class="metric">
+          <span>待跟进</span>
+          <strong id="todoCount">0</strong>
+        </div>
+        <div class="metric">
+          <span>高关注/危机</span>
+          <strong id="riskCount">0</strong>
+        </div>
+      </section>
+
+      <section class="summary-box">
+        <div class="summary-card">
+          <h3>本工作台适合记录</h3>
+          <ul>
+            <li>心理课、班会课、团体活动和讲座安排</li>
+            <li>个别辅导、家校沟通和转介跟进</li>
+            <li>测评计划、结果摘要和后续干预</li>
+            <li>危机事件处置、档案整理和阶段总结</li>
+          </ul>
+        </div>
+        <div class="summary-card">
+          <h3>建议使用方式</h3>
+          <ul>
+            <li>每天记录关键事项，使用"状态"标记是否完成</li>
+            <li>对危机与高关注学生设置"高关注"优先级</li>
+            <li>每周导出一次 JSON 备份，避免浏览器数据丢失</li>
+            <li>已部署为在线版本，手机和电脑均可通过网址访问。</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h3 id="recordTitle">全部记录</h3>
+          <button class="btn danger" id="clearCurrentBtn">清空当前筛选记录</button>
+        </div>
+
+        <div class="module-chips" id="submoduleChips"></div>
+
+        <div class="filters">
+          <div class="field">
+            <label for="searchInput">关键词搜索</label>
+            <input id="searchInput" placeholder="搜索标题、对象、内容、标签" />
+          </div>
+          <div class="field">
+            <label for="statusFilter">状态</label>
+            <select id="statusFilter">
+              <option value="">全部状态</option>
+              <option>待处理</option>
+              <option>进行中</option>
+              <option>已完成</option>
+              <option>需跟进</option>
+              <option>已归档</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="priorityFilter">关注级别</label>
+            <select id="priorityFilter">
+              <option value="">全部级别</option>
+              <option>普通</option>
+              <option>重点关注</option>
+              <option>高关注</option>
+              <option>危机</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="dateFilter">时间范围</label>
+            <select id="dateFilter">
+              <option value="">全部时间</option>
+              <option value="week">近7天</option>
+              <option value="month">本月</option>
+              <option value="semester">本学期</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="courseTimetablePanel"></div>
+        <div class="records" id="records"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ==================== 新增/编辑记录弹窗 ==================== -->
+  <div class="modal-mask" id="modalMask" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="modalTitle">新增记录</h3>
+        <button class="icon-btn" id="closeModalBtn" aria-label="关闭">×</button>
+      </div>
+      <form id="recordForm">
+        <div class="form-grid">
+          <input type="hidden" id="recordId" />
+          <div class="field">
+            <label for="categoryInput">大功能</label>
+            <select id="categoryInput" required></select>
+          </div>
+          <div class="field">
+            <label for="submoduleInput">细分模块</label>
+            <select id="submoduleInput" required></select>
+          </div>
+          <div class="field wide">
+            <label for="titleInput">标题</label>
+            <input id="titleInput" required placeholder="例如：高一心理健康课第3课、个别辅导跟进记录" />
+          </div>
+          <div class="field" id="dateField">
+            <label for="dateInput">日期</label>
+            <input id="dateInput" type="date" />
+          </div>
+          <div class="field" id="statusField">
+            <label for="statusInput">状态</label>
+            <select id="statusInput">
+              <option>待处理</option>
+              <option>进行中</option>
+              <option>已完成</option>
+              <option>需跟进</option>
+              <option>已归档</option>
+            </select>
+          </div>
+          <div class="field" id="priorityField">
+            <label for="priorityInput">关注级别</label>
+            <select id="priorityInput">
+              <option>普通</option>
+              <option>重点关注</option>
+              <option>高关注</option>
+              <option>危机</option>
+            </select>
+          </div>
+          <div class="field" id="peopleField">
+            <label for="peopleInput">对象/班级/学生</label>
+            <input id="peopleInput" placeholder="例如：七年级3班、某学生、家长" />
+          </div>
+          <div class="field wide">
+            <label for="tagsInput">标签</label>
+            <input id="tagsInput" placeholder="用逗号分隔，例如：情绪、人际、考试焦虑、家校沟通" />
+            <p class="help-text">可以点击已有标签快速选择，也可以直接输入新标签。多个标签用逗号分隔。</p>
+            <div class="tag-picker" id="tagOptions"></div>
+          </div>
+          <div class="course-fields" id="courseFields">
+            <div class="field">
+              <label for="courseThemeInput">课程主题分类</label>
+              <input id="courseThemeInput" placeholder="例如：情绪管理、人际交往、生命教育、学习心理" />
+              <p class="help-text">可以点击已有课程主题快速选择，也可以直接输入新主题。</p>
+              <div class="tag-picker" id="courseThemeOptions"></div>
+            </div>
+            <div class="field">
+              <label for="courseClassInput">上课年级</label>
+              <input id="courseClassInput" placeholder="例如：七年级、高一年级" />
+            </div>
+            <div class="field">
+              <label for="scheduleDayInput">课程表：星期</label>
+              <select id="scheduleDayInput">
+                <option value="">不设置</option>
+                <option>星期一</option>
+                <option>星期二</option>
+                <option>星期三</option>
+                <option>星期四</option>
+                <option>星期五</option>
+                <option>星期六</option>
+                <option>星期日</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="schedulePeriodInput">课程表：节次</label>
+              <select id="schedulePeriodInput">
+                <option value="">不设置</option>
+                <option>第1节</option>
+                <option>第2节</option>
+                <option>第3节</option>
+                <option>第4节</option>
+                <option>第5节</option>
+                <option>第6节</option>
+                <option>第7节</option>
+                <option>第8节</option>
+                <option>晚自习</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="attachmentInput">上传附件</label>
+              <input id="attachmentInput" type="file" multiple accept=".doc,.docx,.ppt,.pptx,.pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/pdf" />
+              <p class="help-text">支持 Word、PPT、PDF。文件会上传到服务器。建议大文件另存网盘并在链接栏保存地址。</p>
+            </div>
+            <div class="field wide">
+              <label for="resourceLinksInput">资源链接</label>
+              <textarea id="resourceLinksInput" placeholder="每行一个链接，可写成：资源名称 | https://...&#10;例如：情绪温度计课程 | https://..."></textarea>
+              <p class="help-text">适合保存微信公众号文章、学习网站、网盘课件链接等。</p>
+            </div>
+            <div class="field wide">
+              <label>已保存附件</label>
+              <div class="attachment-list" id="attachmentList"></div>
+            </div>
+            <div class="field wide">
+              <label for="courseReflectionInput">课程反思</label>
+              <textarea id="courseReflectionInput" placeholder="记录课堂效果、学生反馈、教学亮点、问题与下次调整方向。"></textarea>
+            </div>
+          </div>
+          <div class="activity-fields" id="activityFields">
+            <div class="field wide" id="activityAudienceField">
+              <label for="activityAudienceInput">面向对象</label>
+              <input id="activityAudienceInput" placeholder="例如：全校学生、七年级学生、班主任、家长" />
+            </div>
+            <div class="field">
+              <label for="activityAttachmentInput">上传附件</label>
+              <input id="activityAttachmentInput" type="file" multiple accept=".doc,.docx,.ppt,.pptx,.pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/pdf" />
+              <p class="help-text">支持 Word、PPT、PDF，可用于保存活动方案、讲座课件、通知、总结等材料。</p>
+            </div>
+            <div class="field wide" id="activityLinksField">
+              <label for="activityResourceLinksInput">活动资源链接</label>
+              <textarea id="activityResourceLinksInput" placeholder="每行一个链接，可写成：资源名称 | https://...&#10;例如：心理活动案例 | https://..."></textarea>
+              <p class="help-text">适合保存微信公众号文章、活动案例、学习网站、网盘资料链接等。</p>
+            </div>
+            <div class="field wide">
+              <label>已保存附件</label>
+              <div class="attachment-list" id="activityAttachmentList"></div>
+            </div>
+          </div>
+          <div class="counseling-fields" id="counselingFields">
+            <div class="field wide" id="counselingLinksField">
+              <label for="counselingResourceLinksInput">团辅资源链接</label>
+              <textarea id="counselingResourceLinksInput" placeholder="每行一个链接，可写成：资源名称 | https://...&#10;例如：合作主题团辅方案 | https://..."></textarea>
+              <p class="help-text">适合保存团辅方案、活动案例、学习网站、公众号文章、网盘资料链接等。</p>
+            </div>
+            <div class="field" id="counselingAttachmentField">
+              <label for="counselingAttachmentInput">上传附件</label>
+              <input id="counselingAttachmentInput" type="file" multiple accept=".doc,.docx,.ppt,.pptx,.pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/pdf" />
+              <p class="help-text">支持 Word、PPT、PDF，可用于保存团辅方案、课件、活动单和复盘材料。</p>
+            </div>
+            <div class="field wide" id="counselingAttachmentListField">
+              <label>已保存附件</label>
+              <div class="attachment-list" id="counselingAttachmentList"></div>
+            </div>
+            <div class="field wide" id="groupEffectField">
+              <label for="groupEffectInput">活动效果</label>
+              <textarea id="groupEffectInput" placeholder="记录团辅活动后的参与度、课堂氛围、学生反馈、目标达成情况等。"></textarea>
+            </div>
+            <div class="field wide" id="groupReflectionField">
+              <label for="groupReflectionInput">总结反思</label>
+              <textarea id="groupReflectionInput" placeholder="记录本次团辅活动的亮点、不足、调整建议和下次优化方向。"></textarea>
+            </div>
+          </div>
+          <div class="field wide" id="contentField">
+            <label for="contentInput">记录内容</label>
+            <textarea id="contentInput" placeholder="记录目标、过程、观察、结果、后续安排等。"></textarea>
+          </div>
+          <div class="field wide" id="nextStepField">
+            <label for="nextStepInput" id="nextStepLabel">下一步跟进</label>
+            <textarea id="nextStepInput" placeholder="例如：一周后回访；联系班主任；预约家长沟通；准备测评反馈。"></textarea>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button class="btn" type="button" id="cancelBtn">取消</button>
+          <button class="btn primary" type="submit">保存记录</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== 修改密码弹窗 ==================== -->
+  <div class="modal-mask" id="passwordModalMask" role="dialog" aria-modal="true">
+    <div class="modal password-modal">
+      <h3>修改密码</h3>
+      <p class="password-desc">请输入旧密码和新密码</p>
+      <div class="field">
+        <label for="oldPasswordInput">旧密码</label>
+        <input id="oldPasswordInput" type="password" placeholder="请输入旧密码" required autocomplete="current-password" />
+      </div>
+      <div class="field">
+        <label for="newPasswordInput">新密码</label>
+        <input id="newPasswordInput" type="password" placeholder="请输入新密码" required autocomplete="new-password" />
+      </div>
+      <div class="field">
+        <label for="confirmPasswordInput">确认新密码</label>
+        <input id="confirmPasswordInput" type="password" placeholder="请再次输入新密码" required autocomplete="new-password" />
+      </div>
+      <div class="password-error" id="passwordError"></div>
+      <div class="password-actions">
+        <button class="btn" type="button" id="cancelPasswordBtn">取消</button>
+        <button class="btn primary" type="button" id="submitPasswordBtn">确认修改</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 全局加载遮罩 -->
+  <div class="app-loading-mask" id="loadingMask">
+    <div class="loading-spinner">正在加载，请稍候...</div>
+  </div>
+
+  <script>
+    /* ==================== 分类定义（与原版一致） ==================== */
+    const categories = [
+      {
+        id: "dashboard",
+        name: "工作概览",
+        icon: "📌",
+        description: "查看全部模块的记录数量、待跟进事项与高关注事项。"
+      },
+      {
+        id: "course",
+        name: "课程",
+        icon: "📚",
+        description: "管理心理课课程表、备课资源、课程材料、课堂记录与反馈，支持按主题保存链接、教案、课件和 PDF。",
+        modules: ["课程表", "备课资源", "课程材料", "课堂记录与反馈"]
+      },
+      {
+        id: "activity",
+        name: "心理活动",
+        icon: "🌿",
+        description: "管理心理活动资源、活动策划和主题讲座，支持保存链接、方案文件、讲座课件和活动材料。",
+        modules: ["活动资源", "活动策划", "主题讲座"]
+      },
+      {
+        id: "counseling",
+        name: "心理辅导",
+        icon: "💬",
+        description: "管理个体心理辅导与团体心理辅导，包含咨询记录、家校沟通、重点跟进、团辅资源和团辅活动策划。",
+        modules: ["一般咨询记录", "家校沟通", "重点跟进记录", "团辅资源", "团辅活动策划", "常识积累"]
+      },
+      {
+        id: "assessment",
+        name: "心理测评",
+        icon: "📊",
+        description: "管理测评计划、量表记录、结果摘要、筛查名单和反馈安排。",
+        modules: ["测评计划", "量表管理", "结果摘要", "筛查名单", "反馈记录"]
+      },
+      {
+        id: "crisis",
+        name: "危机处理",
+        icon: "⚠️",
+        description: "记录危机识别、评估、处置、上报、转介和后续跟踪。",
+        modules: ["危机识别", "风险评估", "处置记录", "上报协同", "转介记录", "跟踪回访"]
+      },
+      {
+        id: "archive",
+        name: "档案管理",
+        icon: "🗂️",
+        description: "整理学生档案、咨询档案、测评档案、同意书和归档状态。",
+        modules: ["学生档案", "咨询档案", "测评档案", "家校材料", "归档检查"]
+      },
+      {
+        id: "summary",
+        name: "工作总结",
+        icon: "📝",
+        description: "沉淀周总结、月总结、学期总结、案例复盘和数据统计。",
+        modules: ["周总结", "月总结", "学期总结", "案例复盘", "数据统计"]
+      }
+    ];
+
+    /* ==================== 全局状态 ==================== */
+    const state = {
+      selectedCategory: "dashboard",
+      selectedSubmodule: "",
+      editingId: null,
+      /* 附件列表：在线版只保存 { id, name, size }，不含 dataUrl */
+      formAttachments: [],
+      records: [],
+      /* 用于搜索/筛选防抖的定时器 */
+      filterTimer: null
+    };
+
+    const $ = (selector) => document.querySelector(selector);
+
+    /* ==================== DOM 元素引用 ==================== */
+    const elements = {
+      loginPage: $("#loginPage"),
+      appPage: $("#appPage"),
+      loginForm: $("#loginForm"),
+      loginUsername: $("#loginUsername"),
+      loginPassword: $("#loginPassword"),
+      loginError: $("#loginError"),
+      loginBtn: $("#loginBtn"),
+      loadingMask: $("#loadingMask"),
+      categoryNav: $("#categoryNav"),
+      pageTitle: $("#pageTitle"),
+      pageDescription: $("#pageDescription"),
+      totalCount: $("#totalCount"),
+      monthCount: $("#monthCount"),
+      todoCount: $("#todoCount"),
+      riskCount: $("#riskCount"),
+      recordTitle: $("#recordTitle"),
+      submoduleChips: $("#submoduleChips"),
+      courseTimetablePanel: $("#courseTimetablePanel"),
+      records: $("#records"),
+      searchInput: $("#searchInput"),
+      statusFilter: $("#statusFilter"),
+      priorityFilter: $("#priorityFilter"),
+      dateFilter: $("#dateFilter"),
+      modalMask: $("#modalMask"),
+      recordForm: $("#recordForm"),
+      modalTitle: $("#modalTitle"),
+      recordId: $("#recordId"),
+      dateField: $("#dateField"),
+      statusField: $("#statusField"),
+      priorityField: $("#priorityField"),
+      peopleField: $("#peopleField"),
+      categoryInput: $("#categoryInput"),
+      submoduleInput: $("#submoduleInput"),
+      titleInput: $("#titleInput"),
+      dateInput: $("#dateInput"),
+      statusInput: $("#statusInput"),
+      priorityInput: $("#priorityInput"),
+      peopleInput: $("#peopleInput"),
+      tagsInput: $("#tagsInput"),
+      tagOptions: $("#tagOptions"),
+      contentField: $("#contentField"),
+      contentInput: $("#contentInput"),
+      nextStepField: $("#nextStepField"),
+      nextStepLabel: $("#nextStepLabel"),
+      courseFields: $("#courseFields"),
+      courseThemeInput: $("#courseThemeInput"),
+      courseThemeOptions: $("#courseThemeOptions"),
+      courseReflectionInput: $("#courseReflectionInput"),
+      courseClassInput: $("#courseClassInput"),
+      scheduleDayInput: $("#scheduleDayInput"),
+      schedulePeriodInput: $("#schedulePeriodInput"),
+      resourceLinksInput: $("#resourceLinksInput"),
+      attachmentInput: $("#attachmentInput"),
+      attachmentList: $("#attachmentList"),
+      activityFields: $("#activityFields"),
+      activityAudienceField: $("#activityAudienceField"),
+      activityAudienceInput: $("#activityAudienceInput"),
+      activityLinksField: $("#activityLinksField"),
+      activityResourceLinksInput: $("#activityResourceLinksInput"),
+      activityAttachmentInput: $("#activityAttachmentInput"),
+      activityAttachmentList: $("#activityAttachmentList"),
+      counselingFields: $("#counselingFields"),
+      counselingLinksField: $("#counselingLinksField"),
+      counselingResourceLinksInput: $("#counselingResourceLinksInput"),
+      counselingAttachmentField: $("#counselingAttachmentField"),
+      counselingAttachmentInput: $("#counselingAttachmentInput"),
+      counselingAttachmentListField: $("#counselingAttachmentListField"),
+      counselingAttachmentList: $("#counselingAttachmentList"),
+      groupEffectField: $("#groupEffectField"),
+      groupEffectInput: $("#groupEffectInput"),
+      groupReflectionField: $("#groupReflectionField"),
+      groupReflectionInput: $("#groupReflectionInput"),
+      nextStepInput: $("#nextStepInput"),
+      importFile: $("#importFile"),
+      /* 修改密码相关 */
+      passwordModalMask: $("#passwordModalMask"),
+      oldPasswordInput: $("#oldPasswordInput"),
+      newPasswordInput: $("#newPasswordInput"),
+      confirmPasswordInput: $("#confirmPasswordInput"),
+      passwordError: $("#passwordError")
+    };
+
+    /* ==================== API 请求封装 ==================== */
+
+    /**
+     * 获取存储在 localStorage 中的 token
+     */
+    function getToken() {
+      return localStorage.getItem("psych_token") || "";
+    }
+
+    /**
+     * 带认证的 fetch 请求封装
+     * @param {string} url - 请求路径（相对路径，如 /api/records）
+     * @param {object} options - fetch 选项
+     * @returns {Promise<any>} - 解析后的 JSON 响应
+     */
+    async function apiRequest(url, options = {}) {
+      const token = getToken();
+      const headers = {
+        ...options.headers
+      };
+      /* 如果有 token 且不是 FormData，自动设置 Content-Type 和 Authorization */
+      if (token) {
+        headers["Authorization"] = "Bearer " + token;
+      }
+      /* 如果 body 是普通对象且不是 FormData，自动设置 JSON Content-Type */
+      if (options.body && !(options.body instanceof FormData) && typeof options.body === "string") {
+        if (!headers["Content-Type"]) {
+          headers["Content-Type"] = "application/json";
+        }
+      }
+      const response = await fetch(url, { ...options, headers });
+      /* 401 时跳转登录页 */
+      if (response.status === 401) {
+        localStorage.removeItem("psych_token");
+        showLoginPage();
+        throw new Error("登录已过期，请重新登录。");
+      }
+      /* 非成功状态码抛出错误 */
+      if (!response.ok) {
+        const errorText = await response.text().catch(() => "请求失败");
+        throw new Error(errorText || "请求失败");
+      }
+      /* 204 No Content 或空响应 */
+      if (response.status === 204) return null;
+      return response.json();
+    }
+
+    /* ==================== 登录/登出/修改密码 ==================== */
+
+    /**
+     * 显示登录页面，隐藏主应用
+     */
+    function showLoginPage() {
+      elements.loginPage.style.display = "flex";
+      elements.appPage.style.display = "none";
+      elements.loginError.textContent = "";
+      elements.loginUsername.value = "";
+      elements.loginPassword.value = "";
+    }
+
+    /**
+     * 显示主应用页面，隐藏登录页
+     */
+    function showAppPage() {
+      elements.loginPage.style.display = "none";
+      elements.appPage.style.display = "grid";
+    }
+
+    /**
+     * 处理登录表单提交
+     */
+    async function handleLogin(event) {
+      event.preventDefault();
+      const username = elements.loginUsername.value.trim();
+      const password = elements.loginPassword.value;
+      if (!username || !password) {
+        elements.loginError.textContent = "请输入账号和密码。";
+        return;
+      }
+      elements.loginBtn.disabled = true;
+      elements.loginError.textContent = "";
+      try {
+        const result = await apiRequest("/api/login", {
+          method: "POST",
+          body: JSON.stringify({ username, password })
+        });
+        /* 保存 token 到 localStorage */
+        if (result && result.token) {
+          localStorage.setItem("psych_token", result.token);
+        }
+        /* 显示主应用并加载数据 */
+        showAppPage();
+        await loadRecords();
+        render();
+      } catch (error) {
+        elements.loginError.textContent = error.message || "登录失败，请检查账号和密码。";
+      } finally {
+        elements.loginBtn.disabled = false;
+      }
+    }
+
+    /**
+     * 退出登录
+     */
+    function handleLogout() {
+      const confirmed = confirm("确定要退出登录吗？");
+      if (!confirmed) return;
+      localStorage.removeItem("psych_token");
+      state.records = [];
+      showLoginPage();
+    }
+
+    /**
+     * 打开修改密码弹窗
+     */
+    function openPasswordModal() {
+      elements.oldPasswordInput.value = "";
+      elements.newPasswordInput.value = "";
+      elements.confirmPasswordInput.value = "";
+      elements.passwordError.textContent = "";
+      elements.passwordModalMask.classList.add("show");
+      elements.oldPasswordInput.focus();
+    }
+
+    /**
+     * 关闭修改密码弹窗
+     */
+    function closePasswordModal() {
+      elements.passwordModalMask.classList.remove("show");
+    }
+
+    /**
+     * 提交修改密码请求
+     */
+    async function handleChangePassword() {
+      const oldPassword = elements.oldPasswordInput.value;
+      const newPassword = elements.newPasswordInput.value;
+      const confirmPassword = elements.confirmPasswordInput.value;
+      elements.passwordError.textContent = "";
+
+      if (!oldPassword || !newPassword || !confirmPassword) {
+        elements.passwordError.textContent = "请填写所有字段。";
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        elements.passwordError.textContent = "两次输入的新密码不一致。";
+        return;
+      }
+      if (newPassword.length < 6) {
+        elements.passwordError.textContent = "新密码长度不能少于6位。";
+        return;
+      }
+
+      try {
+        await apiRequest("/api/change-password", {
+          method: "POST",
+          body: JSON.stringify({ oldPassword, newPassword })
+        });
+        alert("密码修改成功，请使用新密码重新登录。");
+        closePasswordModal();
+        /* 修改密码后需要重新登录 */
+        localStorage.removeItem("psych_token");
+        state.records = [];
+        showLoginPage();
+      } catch (error) {
+        elements.passwordError.textContent = error.message || "密码修改失败。";
+      }
+    }
+
+    /* ==================== 数据加载（调用 API） ==================== */
+
+    /**
+     * 从服务器加载全部记录
+     * 替代原版从 localStorage 读取的逻辑
+     */
+    async function loadRecords() {
+      try {
+        const data = await apiRequest("/api/records");
+        /* 兼容后端返回 { records: [...] } 或直接返回数组 */
+        const rawRecords = Array.isArray(data) ? data : (data.records || []);
+        state.records = normalizeRecords(rawRecords);
+      } catch (error) {
+        console.warn("加载记录失败：", error);
+        state.records = [];
+        if (error.message !== "登录已过期，请重新登录。") {
+          alert("加载记录失败，请检查网络连接后刷新页面。");
+        }
+      }
+    }
+
+    /**
+     * 规范化记录字段（与原版逻辑一致）
+     */
+    function normalizeRecords(records) {
+      const courseModuleMap = {
+        "课程计划": "备课资源",
+        "教案设计": "课程材料",
+        "资源库": "备课资源",
+        "课堂记录": "课堂记录与反馈",
+        "课后反馈": "课堂记录与反馈"
+      };
+      const activityModuleMap = {
+        "团体辅导": "活动策划",
+        "宣传材料": "活动资源",
+        "活动复盘": "活动策划"
+      };
+      const counselingModuleMap = {
+        "预约管理": "一般咨询记录",
+        "初访记录": "一般咨询记录",
+        "个别辅导": "一般咨询记录",
+        "转介跟进": "重点跟进记录",
+        "回访记录": "重点跟进记录"
+      };
+      return (records || []).map((record) => {
+        const normalizedSubmodule = record.category === "course"
+          ? (courseModuleMap[record.submodule] || record.submodule || "备课资源")
+          : record.category === "activity"
+            ? (activityModuleMap[record.submodule] || record.submodule || "活动资源")
+            : record.category === "counseling"
+              ? (counselingModuleMap[record.submodule] || record.submodule || "一般咨询记录")
+              : record.submodule;
+        return {
+          ...record,
+          submodule: normalizedSubmodule,
+          courseTheme: record.courseTheme || "",
+          courseReflection: record.category === "course" ? (record.courseReflection || record.content || "") : (record.courseReflection || ""),
+          courseClass: record.category === "course" ? (record.courseClass || record.people || "") : (record.courseClass || ""),
+          activityAudience: record.activityAudience || "",
+          groupEffect: record.groupEffect || "",
+          groupReflection: record.groupReflection || "",
+          scheduleDay: record.scheduleDay || "",
+          schedulePeriod: record.schedulePeriod || "",
+          schedulePlace: record.schedulePlace || "",
+          resourceLinks: record.resourceLinks || "",
+          /* 附件：在线版只保留 id、name、size，不包含 dataUrl */
+          attachments: Array.isArray(record.attachments)
+            ? record.attachments.map((att) => ({
+                id: att.id,
+                name: att.name,
+                size: att.size || 0
+              }))
+            : []
+        };
+      });
+    }
+
+    /* ==================== 工具函数 ==================== */
+
+    function getCategory(id) {
+      return categories.find((item) => item.id === id) || categories[0];
+    }
+
+    function getWorkCategories() {
+      return categories.filter((item) => item.id !== "dashboard");
+    }
+
+    function formatDate(value) {
+      if (!value) return "未填写日期";
+      const date = new Date(value + "T00:00:00");
+      if (Number.isNaN(date.getTime())) return value;
+      return date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0") + "-" + String(date.getDate()).padStart(2, "0");
+    }
+
+    function isThisMonth(value) {
+      if (!value) return false;
+      const date = new Date(value + "T00:00:00");
+      const now = new Date();
+      return date.getFullYear() === now.getFullYear() && date.getMonth() === now.getMonth();
+    }
+
+    function isWithinRange(value, range) {
+      if (!range) return true;
+      if (!value) return false;
+      const date = new Date(value + "T00:00:00");
+      const now = new Date();
+      if (Number.isNaN(date.getTime())) return false;
+      const diffDays = (now - date) / (1000 * 60 * 60 * 24);
+
+      if (range === "week") return diffDays >= 0 && diffDays <= 7;
+      if (range === "month") return isThisMonth(value);
+      if (range === "semester") {
+        const month = now.getMonth() + 1;
+        const startMonth = month >= 9 || month <= 1 ? 9 : 2;
+        const startYear = month >= 9 ? now.getFullYear() : now.getFullYear() - (month <= 1 ? 1 : 0);
+        const start = new Date(startYear, startMonth - 1, 1);
+        return date >= start && date <= now;
+      }
+      return true;
+    }
+
+    /**
+     * 根据时间范围筛选值计算 dateFrom 和 dateTo
+     */
+    function getDateRange(range) {
+      if (!range) return { dateFrom: "", dateTo: "" };
+      const now = new Date();
+      const toStr = now.toISOString().slice(0, 10);
+      if (range === "week") {
+        const from = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        return { dateFrom: from.toISOString().slice(0, 10), dateTo: toStr };
+      }
+      if (range === "month") {
+        const from = new Date(now.getFullYear(), now.getMonth(), 1);
+        return { dateFrom: from.toISOString().slice(0, 10), dateTo: toStr };
+      }
+      if (range === "semester") {
+        const month = now.getMonth() + 1;
+        const startMonth = month >= 9 || month <= 1 ? 9 : 2;
+        const startYear = month >= 9 ? now.getFullYear() : now.getFullYear() - (month <= 1 ? 1 : 0);
+        const from = new Date(startYear, startMonth - 1, 1);
+        return { dateFrom: from.toISOString().slice(0, 10), dateTo: toStr };
+      }
+      return { dateFrom: "", dateTo: "" };
+    }
+
+    function priorityClass(priority) {
+      if (priority === "危机") return "red";
+      if (priority === "高关注") return "red";
+      if (priority === "重点关注") return "yellow";
+      return "green";
+    }
+
+    function statusClass(status) {
+      if (status === "需跟进") return "purple";
+      if (status === "进行中" || status === "待处理") return "yellow";
+      if (status === "已完成" || status === "已归档") return "green";
+      return "";
+    }
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function escapeAttribute(value) {
+      return escapeHtml(value).replace(/`/g, "&#096;");
+    }
+
+    function formatFileSize(size) {
+      if (!size) return "0 KB";
+      if (size < 1024 * 1024) return Math.max(1, Math.round(size / 1024)) + " KB";
+      return (size / 1024 / 1024).toFixed(1) + " MB";
+    }
+
+    function parseTags(value) {
+      return String(value || "")
+        .split(/[,，、;；\n]+/)
+        .map((tag) => tag.trim())
+        .filter(Boolean);
+    }
+
+    function normalizeTagString(value) {
+      return Array.from(new Set(parseTags(value))).join(", ");
+    }
+
+    function getAllTags() {
+      const tagSet = new Set();
+      state.records.forEach((record) => {
+        parseTags(record.tags).forEach((tag) => tagSet.add(tag));
+      });
+      return Array.from(tagSet).sort((a, b) => a.localeCompare(b, "zh-CN"));
+    }
+
+    function getAllCourseThemes() {
+      const themeSet = new Set();
+      state.records.forEach((record) => {
+        if (record.category === "course" && record.courseTheme) {
+          themeSet.add(record.courseTheme.trim());
+        }
+      });
+      return Array.from(themeSet).filter(Boolean).sort((a, b) => a.localeCompare(b, "zh-CN"));
+    }
+
+    /* ==================== 显示/隐藏全局加载遮罩 ==================== */
+
+    function showLoading() {
+      elements.loadingMask.classList.add("show");
+    }
+
+    function hideLoading() {
+      elements.loadingMask.classList.remove("show");
+    }
+
+    /* ==================== 渲染函数 ==================== */
+
+    function renderNavigation() {
+      elements.categoryNav.innerHTML = categories.map((category) => {
+        const count = category.id === "dashboard"
+          ? state.records.length
+          : state.records.filter((record) => record.category === category.id).length;
+        return '<button class="nav-button ' + (state.selectedCategory === category.id ? "active" : "") + '" data-category="' + category.id + '">'
+          + '<span>' + category.icon + '</span>'
+          + '<span>' + category.name + '</span>'
+          + '<span class="nav-count">' + count + '</span>'
+          + '</button>';
+      }).join("");
+
+      elements.categoryNav.querySelectorAll(".nav-button").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.selectedCategory = button.dataset.category;
+          state.selectedSubmodule = "";
+          /* 切换分类时重新从 API 加载对应数据 */
+          render();
+        });
+      });
+    }
+
+    function renderMetrics() {
+      elements.totalCount.textContent = state.records.length;
+      elements.monthCount.textContent = state.records.filter((record) => isThisMonth(record.date)).length;
+      elements.todoCount.textContent = state.records.filter((record) => ["待处理", "进行中", "需跟进"].includes(record.status)).length;
+      elements.riskCount.textContent = state.records.filter((record) => ["高关注", "危机"].includes(record.priority) || record.category === "crisis").length;
+    }
+
+    function renderSubmodules(category) {
+      if (category.id === "dashboard") {
+        elements.submoduleChips.innerHTML = '<button class="chip ' + (state.selectedSubmodule === "" ? "active" : "") + '" data-submodule="">全部</button>'
+          + getWorkCategories().map((item) => '<button class="chip" data-category-jump="' + item.id + '">' + item.name + '</button>').join("");
+        elements.submoduleChips.querySelectorAll("[data-category-jump]").forEach((button) => {
+          button.addEventListener("click", () => {
+            state.selectedCategory = button.dataset.categoryJump;
+            state.selectedSubmodule = "";
+            render();
+          });
+        });
+        return;
+      }
+
+      const chips = ["", ...category.modules].map((module) =>
+        '<button class="chip ' + (state.selectedSubmodule === module ? "active" : "") + '" data-submodule="' + module + '">'
+        + (module || "全部") + '</button>'
+      ).join("");
+      elements.submoduleChips.innerHTML = chips;
+      elements.submoduleChips.querySelectorAll("[data-submodule]").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.selectedSubmodule = button.dataset.submodule;
+          elements.submoduleChips.querySelectorAll("[data-submodule]").forEach((btn) => {
+            btn.classList.toggle("active", btn.dataset.submodule === state.selectedSubmodule);
+          });
+          renderRecords();
+        });
+      });
+    }
+
+    /**
+     * 获取筛选后的记录
+     * 在线版：直接使用当前 state.records（已从 API 加载）
+     * 筛选通过 API 参数在后端完成，这里保留前端轻量筛选作为降级方案
+     */
+    function getFilteredRecords() {
+      return state.records
+        .filter((record) => {
+          if (state.selectedCategory !== "dashboard" && record.category !== state.selectedCategory) return false;
+          if (state.selectedSubmodule && record.submodule !== state.selectedSubmodule) return false;
+          return true;
+        });
+    }
+
+    /**
+     * 通过 API 参数从后端获取筛选后的记录
+     * 搜索和筛选在后端执行
+     */
+    async function fetchFilteredRecords() {
+      const params = new URLSearchParams();
+      if (state.selectedCategory !== "dashboard") {
+        params.set("category", state.selectedCategory);
+      }
+      if (state.selectedSubmodule) {
+        params.set("submodule", state.selectedSubmodule);
+      }
+      const keyword = elements.searchInput.value.trim();
+      if (keyword) {
+        params.set("keyword", keyword);
+      }
+      const status = elements.statusFilter.value;
+      if (status) {
+        params.set("status", status);
+      }
+      const priority = elements.priorityFilter.value;
+      if (priority) {
+        params.set("priority", priority);
+      }
+      const range = elements.dateFilter.value;
+      if (range) {
+        const { dateFrom, dateTo } = getDateRange(range);
+        if (dateFrom) params.set("dateFrom", dateFrom);
+        if (dateTo) params.set("dateTo", dateTo);
+      }
+
+      try {
+        const data = await apiRequest("/api/records?" + params.toString());
+        const rawRecords = Array.isArray(data) ? data : (data.records || []);
+        state.records = normalizeRecords(rawRecords);
+      } catch (error) {
+        console.warn("获取筛选记录失败：", error);
+      }
+    }
+
+    function renderRecords() {
+      const records = getFilteredRecords();
+      const category = getCategory(state.selectedCategory);
+      elements.recordTitle.textContent = state.selectedCategory === "dashboard"
+        ? "全部记录"
+        : category.name + "记录";
+      renderCourseTimetablePanel();
+
+      if (!records.length) {
+        elements.records.innerHTML = '<div class="empty">当前没有符合条件的记录。可以点击"新增记录"开始记录，也可以调整筛选条件。</div>';
+        return;
+      }
+
+      elements.records.innerHTML = records.map((record) => {
+        const categoryInfo = getCategory(record.category);
+        const resourceLinksHtml = renderResourceLinks(record.resourceLinks);
+        const attachmentsHtml = renderRecordAttachments(record);
+        return '<article class="record-card">'
+          + '<div>'
+          + '<h4>' + escapeHtml(record.title) + '</h4>'
+          + '<div class="record-meta">'
+          + '<span class="badge">' + categoryInfo.icon + ' ' + categoryInfo.name + '</span>'
+          + '<span class="badge">' + escapeHtml(record.submodule || "未分类") + '</span>'
+          + (record.date ? '<span class="badge">' + formatDate(record.date) + '</span>' : "")
+          + (record.status ? '<span class="badge ' + statusClass(record.status) + '">' + escapeHtml(record.status) + '</span>' : "")
+          + (record.priority && record.priority !== "普通" ? '<span class="badge ' + priorityClass(record.priority) + '">' + escapeHtml(record.priority) + '</span>' : "")
+          + (record.people ? '<span class="badge">' + escapeHtml(record.people) + '</span>' : "")
+          + (record.courseTheme ? '<span class="badge green">主题：' + escapeHtml(record.courseTheme) + '</span>' : "")
+          + (record.courseClass ? '<span class="badge">年级：' + escapeHtml(record.courseClass) + '</span>' : "")
+          + (record.activityAudience ? '<span class="badge green">面向对象：' + escapeHtml(record.activityAudience) + '</span>' : "")
+          + (record.category === "counseling" && ["一般咨询记录", "家校沟通", "重点跟进记录"].includes(record.submodule) ? '<span class="badge purple">个体心理辅导</span>' : "")
+          + (record.category === "counseling" && ["团辅资源", "团辅活动策划", "常识积累"].includes(record.submodule) ? '<span class="badge purple">团体心理辅导</span>' : "")
+          + (record.scheduleDay ? '<span class="badge purple">' + escapeHtml(record.scheduleDay) + ' ' + escapeHtml(record.schedulePeriod || "") + '</span>' : "")
+          + '</div>'
+          + (record.tags ? '<p>标签：' + escapeHtml(record.tags) + '</p>' : "")
+          + resourceLinksHtml
+          + attachmentsHtml
+          + (record.category !== "course" && record.content ? '<p>' + escapeHtml(record.content) + '</p>' : "")
+          + (record.courseReflection ? '<p><strong>课程反思：</strong>' + escapeHtml(record.courseReflection) + '</p>' : "")
+          + (record.groupEffect ? '<p><strong>活动效果：</strong>' + escapeHtml(record.groupEffect) + '</p>' : "")
+          + (record.groupReflection ? '<p><strong>总结反思：</strong>' + escapeHtml(record.groupReflection) + '</p>' : "")
+          + (record.category === "activity" && record.nextStep ? '<p><strong>活动反思：</strong>' + escapeHtml(record.nextStep) + '</p>' : "")
+          + (record.category !== "course" && record.category !== "activity" && record.nextStep ? '<p><strong>下一步：</strong>' + escapeHtml(record.nextStep) + '</p>' : "")
+          + '</div>'
+          + '<div class="record-actions">'
+          + '<button class="icon-btn" title="编辑" data-edit="' + record.id + '">✎</button>'
+          + '<button class="icon-btn" title="删除" data-delete="' + record.id + '">×</button>'
+          + '</div>'
+          + '</article>';
+      }).join("");
+
+      /* 绑定编辑和删除按钮事件 */
+      elements.records.querySelectorAll("[data-edit]").forEach((button) => {
+        button.addEventListener("click", () => openModal(button.dataset.edit));
+      });
+      elements.records.querySelectorAll("[data-delete]").forEach((button) => {
+        button.addEventListener("click", () => deleteRecord(button.dataset.delete));
+      });
+      /* 绑定附件下载按钮事件 */
+      elements.records.querySelectorAll("[data-download-attachment]").forEach((button) => {
+        button.addEventListener("click", () => {
+          downloadAttachment(button.dataset.recordId, button.dataset.attachmentId, button.dataset.attachmentName);
+        });
+      });
+    }
+
+    function renderPageHeader() {
+      const category = getCategory(state.selectedCategory);
+      elements.pageTitle.textContent = category.name;
+      elements.pageDescription.textContent = category.description;
+    }
+
+    function populateFormOptions() {
+      elements.categoryInput.innerHTML = getWorkCategories().map((category) =>
+        '<option value="' + category.id + '">' + category.name + '</option>'
+      ).join("");
+      updateSubmoduleOptions();
+    }
+
+    function updateSubmoduleOptions() {
+      const category = getCategory(elements.categoryInput.value);
+      elements.submoduleInput.innerHTML = (category.modules || []).map((module) =>
+        '<option value="' + module + '">' + module + '</option>'
+      ).join("");
+      toggleCourseFields();
+    }
+
+    function toggleCourseFields() {
+      const isCourse = elements.categoryInput.value === "course";
+      const isActivity = elements.categoryInput.value === "activity";
+      const isCounseling = elements.categoryInput.value === "counseling";
+      const activitySubmodule = elements.submoduleInput.value;
+      const isActivityResource = isActivity && activitySubmodule === "活动资源";
+      const isActivityPlanOrLecture = isActivity && ["活动策划", "主题讲座"].includes(activitySubmodule);
+      const isGroupResource = isCounseling && elements.submoduleInput.value === "团辅资源";
+      const isGroupPlan = isCounseling && elements.submoduleInput.value === "团辅活动策划";
+      const isKnowledgeBase = isCounseling && elements.submoduleInput.value === "常识积累";
+      const isCourseMaterial = isCourse && activitySubmodule === "课程材料";
+      const hideDate = (isCourse && !isCourseMaterial) || isActivityResource || isKnowledgeBase;
+      elements.courseFields.classList.toggle("show", isCourse);
+      elements.activityFields.classList.toggle("show", isActivity);
+      elements.counselingFields.classList.toggle("show", isCounseling && (isGroupResource || isGroupPlan || isKnowledgeBase));
+      elements.dateField.classList.toggle("form-field-hidden", hideDate);
+      elements.statusField.classList.toggle("form-field-hidden", isCourse || isGroupResource || isKnowledgeBase);
+      elements.priorityField.classList.toggle("form-field-hidden", isCourse || isActivity || isGroupResource || isKnowledgeBase);
+      elements.peopleField.classList.toggle("form-field-hidden", isCourse || isActivity || isGroupResource || isKnowledgeBase);
+      elements.dateInput.disabled = hideDate;
+      elements.statusInput.disabled = isCourse || isGroupResource || isKnowledgeBase;
+      elements.priorityInput.disabled = isCourse || isActivity || isGroupResource || isKnowledgeBase;
+      elements.peopleInput.disabled = isCourse || isActivity || isGroupResource || isKnowledgeBase;
+      elements.contentField.classList.toggle("form-field-hidden", isCourse);
+      elements.nextStepField.classList.toggle("form-field-hidden", isCourse);
+      elements.contentInput.disabled = isCourse;
+      elements.nextStepInput.disabled = isCourse;
+      elements.nextStepLabel.textContent = isActivity ? "活动反思" : "下一步跟进";
+      elements.nextStepInput.placeholder = isActivity
+        ? "记录本次活动的效果、亮点、不足、学生反馈和后续优化方向。"
+        : "例如：一周后回访；联系班主任；预约家长沟通；准备测评反馈。";
+      elements.courseThemeInput.disabled = !isCourse;
+      elements.courseReflectionInput.disabled = !isCourse;
+      elements.courseClassInput.disabled = !isCourse;
+      elements.scheduleDayInput.disabled = !isCourse;
+      elements.schedulePeriodInput.disabled = !isCourse;
+      elements.resourceLinksInput.disabled = !isCourse;
+      elements.attachmentInput.disabled = !isCourse;
+      elements.activityAudienceField.classList.toggle("form-field-hidden", !isActivityPlanOrLecture);
+      elements.activityLinksField.classList.toggle("form-field-hidden", !isActivityResource);
+      elements.activityAudienceInput.disabled = !isActivityPlanOrLecture;
+      elements.activityResourceLinksInput.disabled = !isActivityResource;
+      elements.activityAttachmentInput.disabled = !isActivity;
+      elements.counselingLinksField.classList.toggle("form-field-hidden", !(isGroupResource || isKnowledgeBase));
+      elements.counselingAttachmentField.classList.toggle("form-field-hidden", !(isGroupResource || isKnowledgeBase));
+      elements.counselingAttachmentListField.classList.toggle("form-field-hidden", !(isGroupResource || isKnowledgeBase));
+      elements.groupEffectField.classList.toggle("form-field-hidden", !isGroupPlan);
+      elements.groupReflectionField.classList.toggle("form-field-hidden", !isGroupPlan);
+      elements.counselingResourceLinksInput.disabled = !(isGroupResource || isKnowledgeBase);
+      elements.counselingAttachmentInput.disabled = !(isGroupResource || isKnowledgeBase);
+      elements.groupEffectInput.disabled = !isGroupPlan;
+      elements.groupReflectionInput.disabled = !isGroupPlan;
+    }
+
+    /* ==================== 标签和课程主题选择器 ==================== */
+
+    function renderTagOptions() {
+      const allTags = getAllTags();
+      const selectedTags = new Set(parseTags(elements.tagsInput.value));
+      if (!allTags.length) {
+        elements.tagOptions.innerHTML = '<span class="tag-empty">暂无已有标签。保存记录后，新标签会出现在这里供下次选择。</span>';
+        return;
+      }
+      elements.tagOptions.innerHTML = allTags.map((tag) =>
+        '<button class="tag-option ' + (selectedTags.has(tag) ? "active" : "") + '" type="button" data-tag="' + escapeAttribute(tag) + '">'
+        + escapeHtml(tag) + '</button>'
+      ).join("");
+      elements.tagOptions.querySelectorAll("[data-tag]").forEach((button) => {
+        button.addEventListener("click", () => toggleTag(button.dataset.tag));
+      });
+    }
+
+    function toggleTag(tag) {
+      const tags = parseTags(elements.tagsInput.value);
+      const index = tags.indexOf(tag);
+      if (index >= 0) {
+        tags.splice(index, 1);
+      } else {
+        tags.push(tag);
+      }
+      elements.tagsInput.value = Array.from(new Set(tags)).join(", ");
+      renderTagOptions();
+    }
+
+    function renderCourseThemeOptions() {
+      const allThemes = getAllCourseThemes();
+      const selectedTheme = elements.courseThemeInput.value.trim();
+      if (!allThemes.length) {
+        elements.courseThemeOptions.innerHTML = '<span class="tag-empty">暂无已有课程主题。保存课程记录后，新主题会出现在这里供下次选择。</span>';
+        return;
+      }
+      elements.courseThemeOptions.innerHTML = allThemes.map((theme) =>
+        '<button class="tag-option ' + (selectedTheme === theme ? "active" : "") + '" type="button" data-course-theme="' + escapeAttribute(theme) + '">'
+        + escapeHtml(theme) + '</button>'
+      ).join("");
+      elements.courseThemeOptions.querySelectorAll("[data-course-theme]").forEach((button) => {
+        button.addEventListener("click", () => {
+          elements.courseThemeInput.value = button.dataset.courseTheme;
+          renderCourseThemeOptions();
+        });
+      });
+    }
+
+    /* ==================== 课程表渲染 ==================== */
+
+    function renderCourseTimetablePanel() {
+      const shouldShow = state.selectedCategory === "course" && (!state.selectedSubmodule || state.selectedSubmodule === "课程表");
+      if (!shouldShow) {
+        elements.courseTimetablePanel.innerHTML = "";
+        return;
+      }
+
+      const days = ["星期一", "星期二", "星期三", "星期四", "星期五"];
+      const periods = ["第1节", "第2节", "第3节", "第4节", "第5节", "第6节", "第7节", "第8节", "晚自习"];
+      const lessons = state.records.filter((record) =>
+        record.category === "course" &&
+        record.submodule === "课程表" &&
+        record.scheduleDay &&
+        record.schedulePeriod
+      );
+
+      const rows = periods.map((period) =>
+        '<tr>'
+        + '<th class="period-cell">' + period + '</th>'
+        + days.map((day) => {
+            const cellLessons = lessons.filter((record) => record.scheduleDay === day && record.schedulePeriod === period);
+            return '<td>'
+              + (cellLessons.length ? cellLessons.map((record) =>
+                '<button class="lesson-card" type="button" data-edit-lesson="' + record.id + '">'
+                + '<strong>' + escapeHtml(record.courseClass || record.people || record.title || "未填写年级") + '</strong>'
+                + '<span>' + escapeHtml(record.title || "心理课") + '</span>'
+                + (record.courseTheme ? '<span>主题：' + escapeHtml(record.courseTheme) + '</span>' : "")
+                + '</button>'
+              ).join("") : "")
+              + '</td>';
+          }).join("")
+        + '</tr>'
+      ).join("");
+
+      elements.courseTimetablePanel.innerHTML = '<div class="timetable-panel">'
+        + '<div class="timetable-head">'
+        + '<h3>课程表</h3>'
+        + '<button class="btn primary" type="button" id="quickAddLessonBtn">新增课程表记录</button>'
+        + '</div>'
+        + '<div class="timetable-wrap">'
+        + '<table class="timetable">'
+        + '<thead><tr><th>节次</th>' + days.map((day) => '<th>' + day + '</th>').join("") + '</tr></thead>'
+        + '<tbody>' + rows + '</tbody>'
+        + '</table>'
+        + '</div>'
+        + '</div>';
+
+      const quickAddButton = $("#quickAddLessonBtn");
+      if (quickAddButton) {
+        quickAddButton.addEventListener("click", () => {
+          state.selectedCategory = "course";
+          state.selectedSubmodule = "课程表";
+          openModal();
+        });
+      }
+
+      elements.courseTimetablePanel.querySelectorAll("[data-edit-lesson]").forEach((button) => {
+        button.addEventListener("click", () => openModal(button.dataset.editLesson));
+      });
+    }
+
+    /* ==================== 资源链接渲染 ==================== */
+
+    function parseResourceLinks(value) {
+      return String(value || "")
+        .split(/\n+/)
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .map((line) => {
+          const parts = line.split("|").map((part) => part.trim());
+          if (parts.length >= 2) return { title: parts[0], url: parts.slice(1).join("|") };
+          const urlMatch = line.match(/https?:\/\/\S+/);
+          return {
+            title: urlMatch ? line.replace(urlMatch[0], "").trim() || urlMatch[0] : line,
+            url: urlMatch ? urlMatch[0] : ""
+          };
+        })
+        .filter((item) => item.url && /^https?:\/\//i.test(item.url));
+    }
+
+    function renderResourceLinks(value) {
+      const links = parseResourceLinks(value);
+      if (!links.length) return "";
+      return '<div class="link-list">'
+        + links.map((link) =>
+          '<a class="resource-link" href="' + escapeAttribute(link.url) + '" target="_blank" rel="noopener noreferrer">🔗 ' + escapeHtml(link.title || link.url) + '</a>'
+        ).join("")
+        + '</div>';
+    }
+
+    /* ==================== 附件处理（在线版：文件上传/下载 API） ==================== */
+
+    /**
+     * 渲染记录列表中的附件
+     * 在线版：附件只有 id、name、size，点击时通过 API 下载
+     */
+    function renderRecordAttachments(record) {
+      const attachments = Array.isArray(record.attachments) ? record.attachments : [];
+      if (!attachments.length) return "";
+      return '<div class="attachment-list">'
+        + attachments.map((file) =>
+          '<button class="attachment-pill" data-record-id="' + record.id + '" data-attachment-id="' + file.id + '" data-attachment-name="' + escapeAttribute(file.name) + '" data-download-attachment="true" type="button">'
+          + '📎 ' + escapeHtml(file.name) + ' ' + (file.size ? '(' + formatFileSize(file.size) + ')' : "")
+          + '</button>'
+        ).join("")
+        + '</div>';
+    }
+
+    /**
+     * 渲染表单中的附件列表
+     * 在线版：只显示 id、name、size，删除时调用 API
+     */
+    function renderAttachmentList() {
+      const attachments = state.formAttachments || [];
+      if (!attachments.length) {
+        const emptyHtml = '<span class="attachment-empty">暂无附件。你可以上传 Word、PPT 或 PDF 作为教案、课件、活动方案或讲座材料归档。</span>';
+        elements.attachmentList.innerHTML = emptyHtml;
+        elements.activityAttachmentList.innerHTML = emptyHtml;
+        elements.counselingAttachmentList.innerHTML = emptyHtml;
+        return;
+      }
+      const attachmentHtml = attachments.map((file) =>
+        '<span class="attachment-pill">'
+        + '📎 ' + escapeHtml(file.name) + ' ' + (file.size ? '(' + formatFileSize(file.size) + ')' : "")
+        + '<button class="attachment-remove" type="button" data-remove-attachment="' + file.id + '" title="移除附件">×</button>'
+        + '</span>'
+      ).join("");
+      elements.attachmentList.innerHTML = attachmentHtml;
+      elements.activityAttachmentList.innerHTML = attachmentHtml;
+      elements.counselingAttachmentList.innerHTML = attachmentHtml;
+      /* 绑定移除附件按钮 */
+      document.querySelectorAll("[data-remove-attachment]").forEach((button) => {
+        button.addEventListener("click", async () => {
+          const attachmentId = button.dataset.removeAttachment;
+          /* 如果正在编辑已有记录，调用 API 删除附件 */
+          if (state.editingId) {
+            try {
+              await apiRequest("/api/records/" + state.editingId + "/attachments/" + attachmentId, {
+                method: "DELETE"
+              });
+              state.formAttachments = state.formAttachments.filter((f) => f.id !== attachmentId);
+              renderAttachmentList();
+            } catch (error) {
+              alert("删除附件失败：" + (error.message || "未知错误"));
+            }
+          } else {
+            /* 新增记录时，附件尚未上传到服务器，直接从列表移除 */
+            state.formAttachments = state.formAttachments.filter((f) => f.id !== attachmentId);
+            renderAttachmentList();
+          }
+        });
+      });
+    }
+
+    /**
+     * 处理文件上传
+     * 在线版：通过 API 上传到服务器，返回 { id, name, size }
+     */
+    async function handleAttachmentFiles(files) {
+      const allowedExtensions = /\.(doc|docx|ppt|pptx|pdf)$/i;
+      const selected = Array.from(files || []).filter((file) => allowedExtensions.test(file.name));
+      if (!selected.length) {
+        alert("请选择 Word、PPT 或 PDF 文件。");
+        elements.attachmentInput.value = "";
+        elements.activityAttachmentInput.value = "";
+        elements.counselingAttachmentInput.value = "";
+        return;
+      }
+
+      /* 上传附件需要先保存记录（需要 recordId） */
+      /* 如果是新增记录且尚未保存，暂存文件等待保存后上传 */
+      if (!state.editingId) {
+        /* 新增记录时，先保存记录获取 ID，再上传附件 */
+        /* 这里不做操作，附件会在保存记录后通过 pendingFiles 处理 */
+        state._pendingFiles = state._pendingFiles || [];
+        state._pendingFiles.push(...selected);
+        elements.attachmentInput.value = "";
+        elements.activityAttachmentInput.value = "";
+        elements.counselingAttachmentInput.value = "";
+        alert("文件已暂存，保存记录后会自动上传到服务器。");
+        return;
+      }
+
+      /* 编辑已有记录时，直接上传附件 */
+      for (const file of selected) {
+        try {
+          const formData = new FormData();
+          formData.append("file", file);
+          const result = await apiRequest("/api/records/" + state.editingId + "/attachments", {
+            method: "POST",
+            body: formData
+          });
+          /* 服务器返回附件信息 { id, name, size } */
+          if (result) {
+            state.formAttachments.push({
+              id: result.id || result.attachmentId,
+              name: result.name || file.name,
+              size: result.size || file.size
+            });
+          }
+        } catch (error) {
+          alert("上传附件失败：" + file.name + "，" + (error.message || "未知错误"));
+        }
+      }
+      elements.attachmentInput.value = "";
+      elements.activityAttachmentInput.value = "";
+      elements.counselingAttachmentInput.value = "";
+      renderAttachmentList();
+    }
+
+    /**
+     * 下载附件
+     * 在线版：通过 API 获取文件并触发浏览器下载
+     */
+    async function downloadAttachment(recordId, attachmentId, attachmentName) {
+      try {
+        const token = getToken();
+        const response = await fetch("/api/records/" + recordId + "/attachments/" + attachmentId, {
+          headers: {
+            "Authorization": "Bearer " + token
+          }
+        });
+        if (response.status === 401) {
+          localStorage.removeItem("psych_token");
+          showLoginPage();
+          return;
+        }
+        if (!response.ok) {
+          throw new Error("下载失败");
+        }
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = attachmentName || "附件";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      } catch (error) {
+        alert("下载附件失败：" + (error.message || "请检查网络连接"));
+      }
+    }
+
+    /* ==================== 弹窗操作 ==================== */
+
+    /**
+     * 打开新增/编辑记录弹窗
+     */
+    function openModal(id) {
+      state.editingId = id || null;
+      state._pendingFiles = [];
+      populateFormOptions();
+      elements.recordForm.reset();
+      elements.recordId.value = "";
+      elements.dateInput.value = new Date().toISOString().slice(0, 10);
+      elements.statusInput.value = "进行中";
+      elements.priorityInput.value = "普通";
+      elements.titleInput.placeholder = "例如：高一心理健康课第3课、个别辅导跟进记录";
+      state.formAttachments = [];
+      renderAttachmentList();
+
+      if (id) {
+        /* 编辑模式：从 state.records 中找到对应记录 */
+        const record = state.records.find((item) => item.id === id);
+        if (!record) return;
+        elements.modalTitle.textContent = "编辑记录";
+        elements.recordId.value = record.id;
+        elements.categoryInput.value = record.category;
+        updateSubmoduleOptions();
+        elements.submoduleInput.value = record.submodule;
+        elements.titleInput.value = record.title || "";
+        elements.dateInput.value = record.date || "";
+        elements.statusInput.value = record.status || "进行中";
+        elements.priorityInput.value = record.priority || "普通";
+        elements.peopleInput.value = record.people || "";
+        elements.tagsInput.value = record.tags || "";
+        elements.courseThemeInput.value = record.courseTheme || "";
+        elements.courseReflectionInput.value = record.courseReflection || "";
+        elements.courseClassInput.value = record.courseClass || "";
+        elements.activityAudienceInput.value = record.activityAudience || "";
+        elements.scheduleDayInput.value = record.scheduleDay || "";
+        elements.schedulePeriodInput.value = record.schedulePeriod || "";
+        elements.resourceLinksInput.value = record.resourceLinks || "";
+        elements.activityResourceLinksInput.value = record.resourceLinks || "";
+        elements.counselingResourceLinksInput.value = record.resourceLinks || "";
+        elements.groupEffectInput.value = record.groupEffect || "";
+        elements.groupReflectionInput.value = record.groupReflection || "";
+        state.formAttachments = Array.isArray(record.attachments) ? [...record.attachments] : [];
+        renderAttachmentList();
+        renderTagOptions();
+        renderCourseThemeOptions();
+        elements.contentInput.value = record.content || "";
+        elements.nextStepInput.value = record.nextStep || "";
+      } else {
+        /* 新增模式 */
+        elements.modalTitle.textContent = "新增记录";
+        const defaultCategory = state.selectedCategory === "dashboard" ? "counseling" : state.selectedCategory;
+        elements.categoryInput.value = defaultCategory;
+        updateSubmoduleOptions();
+        if (state.selectedSubmodule) elements.submoduleInput.value = state.selectedSubmodule;
+        elements.courseThemeInput.value = "";
+        elements.courseReflectionInput.value = "";
+        elements.courseClassInput.value = "";
+        elements.activityAudienceInput.value = "";
+        elements.scheduleDayInput.value = "";
+        elements.schedulePeriodInput.value = "";
+        elements.resourceLinksInput.value = "";
+        elements.activityResourceLinksInput.value = "";
+        elements.counselingResourceLinksInput.value = "";
+        elements.groupEffectInput.value = "";
+        elements.groupReflectionInput.value = "";
+        elements.tagsInput.value = "";
+        state.formAttachments = [];
+        renderAttachmentList();
+        renderTagOptions();
+        renderCourseThemeOptions();
+        if (defaultCategory === "course" && elements.submoduleInput.value === "课程表") {
+          elements.statusInput.value = "已完成";
+          elements.titleInput.placeholder = "例如：七年级3班心理课";
+        }
+        if (defaultCategory === "crisis") {
+          elements.priorityInput.value = "高关注";
+          elements.statusInput.value = "需跟进";
+        }
+      }
+
+      toggleCourseFields();
+      elements.modalMask.classList.add("show");
+      elements.titleInput.focus();
+    }
+
+    function closeModal() {
+      elements.modalMask.classList.remove("show");
+      state.editingId = null;
+      state._pendingFiles = [];
+    }
+
+    /* ==================== 记录增删改操作（调用 API） ==================== */
+
+    /**
+     * 提交表单：新增或编辑记录
+     * 在线版：调用 POST /api/records 或 PUT /api/records/:id
+     */
+    async function handleSubmit(event) {
+      event.preventDefault();
+      const now = new Date().toISOString();
+      const isCourse = elements.categoryInput.value === "course";
+      const isActivity = elements.categoryInput.value === "activity";
+      const isCounseling = elements.categoryInput.value === "counseling";
+      const isActivityResource = isActivity && elements.submoduleInput.value === "活动资源";
+      const isActivityPlanOrLecture = isActivity && ["活动策划", "主题讲座"].includes(elements.submoduleInput.value);
+      const isGroupResource = isCounseling && elements.submoduleInput.value === "团辅资源";
+      const isGroupPlan = isCounseling && elements.submoduleInput.value === "团辅活动策划";
+      const isKnowledgeBase = isCounseling && elements.submoduleInput.value === "常识积累";
+      const isCourseMaterial = isCourse && elements.submoduleInput.value === "课程材料";
+      const autoDate = (isCourse && !isCourseMaterial) || isActivityResource || isKnowledgeBase;
+
+      const data = {
+        category: elements.categoryInput.value,
+        submodule: elements.submoduleInput.value,
+        title: elements.titleInput.value.trim(),
+        date: autoDate ? "" : elements.dateInput.value,
+        status: (isCourse || isGroupResource || isKnowledgeBase) ? "已归档" : elements.statusInput.value,
+        priority: (isCourse || isActivity || isGroupResource || isKnowledgeBase) ? "普通" : elements.priorityInput.value,
+        people: (isCourse || isActivity || isGroupResource || isKnowledgeBase) ? "" : elements.peopleInput.value.trim(),
+        tags: normalizeTagString(elements.tagsInput.value),
+        courseTheme: isCourse ? elements.courseThemeInput.value.trim() : "",
+        courseReflection: isCourse ? elements.courseReflectionInput.value.trim() : "",
+        courseClass: isCourse ? elements.courseClassInput.value.trim() : "",
+        activityAudience: isActivityPlanOrLecture ? elements.activityAudienceInput.value.trim() : "",
+        groupEffect: isGroupPlan ? elements.groupEffectInput.value.trim() : "",
+        groupReflection: isGroupPlan ? elements.groupReflectionInput.value.trim() : "",
+        scheduleDay: isCourse ? elements.scheduleDayInput.value : "",
+        schedulePeriod: isCourse ? elements.schedulePeriodInput.value : "",
+        schedulePlace: "",
+        resourceLinks: isCourse ? elements.resourceLinksInput.value.trim() : (isActivityResource ? elements.activityResourceLinksInput.value.trim() : (isCounseling && (isGroupResource || isKnowledgeBase) ? elements.counselingResourceLinksInput.value.trim() : "")),
+        content: isCourse ? "" : elements.contentInput.value.trim(),
+        nextStep: isCourse ? "" : elements.nextStepInput.value.trim(),
+        updatedAt: now
+      };
+
+      showLoading();
+
+      try {
+        let recordId = state.editingId;
+
+        if (recordId) {
+          /* 编辑已有记录：调用 PUT /api/records/:id */
+          await apiRequest("/api/records/" + recordId, {
+            method: "PUT",
+            body: JSON.stringify(data)
+          });
+        } else {
+          /* 新增记录：调用 POST /api/records */
+          const result = await apiRequest("/api/records", {
+            method: "POST",
+            body: JSON.stringify(data)
+          });
+          /* 获取新创建记录的 ID */
+          recordId = result && (result.id || result.record && result.record.id);
+        }
+
+        /* 如果有暂存的待上传文件，现在上传 */
+        if (recordId && state._pendingFiles && state._pendingFiles.length > 0) {
+          for (const file of state._pendingFiles) {
+            try {
+              const formData = new FormData();
+              formData.append("file", file);
+              const uploadResult = await apiRequest("/api/records/" + recordId + "/attachments", {
+                method: "POST",
+                body: formData
+              });
+              if (uploadResult) {
+                state.formAttachments.push({
+                  id: uploadResult.id || uploadResult.attachmentId,
+                  name: uploadResult.name || file.name,
+                  size: uploadResult.size || file.size
+                });
+              }
+            } catch (uploadError) {
+              console.warn("上传附件失败：" + file.name, uploadError);
+            }
+          }
+          state._pendingFiles = [];
+        }
+
+        /* 重新从服务器加载最新数据 */
+        await loadRecords();
+        closeModal();
+        render();
+      } catch (error) {
+        alert("保存失败：" + (error.message || "请检查网络连接后重试。"));
+      } finally {
+        hideLoading();
+      }
+    }
+
+    /**
+     * 删除单条记录
+     * 在线版：调用 DELETE /api/records/:id
+     */
+    async function deleteRecord(id) {
+      const record = state.records.find((item) => item.id === id);
+      if (!record) return;
+      const confirmed = confirm('确定删除"' + record.title + '"吗？此操作不可恢复。');
+      if (!confirmed) return;
+
+      showLoading();
+      try {
+        await apiRequest("/api/records/" + id, {
+          method: "DELETE"
+        });
+        /* 从本地状态中移除 */
+        state.records = state.records.filter((item) => item.id !== id);
+        render();
+      } catch (error) {
+        alert("删除失败：" + (error.message || "请检查网络连接后重试。"));
+      } finally {
+        hideLoading();
+      }
+    }
+
+    /**
+     * 清空当前筛选条件下的记录
+     * 在线版：调用 POST /api/records/batch-delete
+     */
+    async function clearCurrentRecords() {
+      const filtered = getFilteredRecords();
+      if (!filtered.length) {
+        alert("当前筛选条件下没有可清空的记录。");
+        return;
+      }
+      const confirmed = confirm("确定删除当前筛选出的 " + filtered.length + " 条记录吗？建议先导出备份。");
+      if (!confirmed) return;
+
+      const ids = filtered.map((record) => record.id);
+      showLoading();
+      try {
+        await apiRequest("/api/records/batch-delete", {
+          method: "POST",
+          body: JSON.stringify({ ids })
+        });
+        /* 重新从服务器加载数据 */
+        await loadRecords();
+        render();
+      } catch (error) {
+        alert("批量删除失败：" + (error.message || "请检查网络连接后重试。"));
+      } finally {
+        hideLoading();
+      }
+    }
+
+    /* ==================== 导入导出（调用 API） ==================== */
+
+    /**
+     * 导出备份数据
+     * 在线版：调用 GET /api/export 下载 JSON 文件
+     */
+    async function exportData() {
+      showLoading();
+      try {
+        const token = getToken();
+        const response = await fetch("/api/export", {
+          headers: {
+            "Authorization": "Bearer " + token
+          }
+        });
+        if (response.status === 401) {
+          localStorage.removeItem("psych_token");
+          showLoginPage();
+          return;
+        }
+        if (!response.ok) {
+          throw new Error("导出失败");
+        }
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        const date = new Date().toISOString().slice(0, 10);
+        link.href = url;
+        link.download = "申亚旭工作台备份_" + date + ".json";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      } catch (error) {
+        alert("导出失败：" + (error.message || "请检查网络连接后重试。"));
+      } finally {
+        hideLoading();
+      }
+    }
+
+    /**
+     * 导入备份数据
+     * 在线版：调用 POST /api/import 上传 JSON 文件
+     */
+    async function importData(file) {
+      showLoading();
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        const result = await apiRequest("/api/import", {
+          method: "POST",
+          body: formData
+        });
+        /* 重新从服务器加载数据 */
+        await loadRecords();
+        render();
+        alert("导入完成。" + (result && result.message ? " " + result.message : ""));
+      } catch (error) {
+        alert("导入失败：" + (error.message || "请确认文件是本工作台导出的 JSON 备份。"));
+      } finally {
+        hideLoading();
+        elements.importFile.value = "";
+      }
+    }
+
+    /* ==================== 搜索和筛选（改为 API 参数，带防抖） ==================== */
+
+    /**
+     * 防抖的搜索/筛选处理
+     * 当筛选条件变化时，通过 API 参数从后端获取数据
+     */
+    function handleFilterChange() {
+      /* 清除之前的定时器 */
+      if (state.filterTimer) {
+        clearTimeout(state.filterTimer);
+      }
+      /* 300ms 防抖 */
+      state.filterTimer = setTimeout(async () => {
+        showLoading();
+        try {
+          await fetchFilteredRecords();
+          renderRecords();
+          /* 同步更新指标 */
+          renderMetrics();
+        } finally {
+          hideLoading();
+        }
+      }, 300);
+    }
+
+    /* ==================== 事件绑定 ==================== */
+
+    function bindEvents() {
+      /* 登录表单 */
+      elements.loginForm.addEventListener("submit", handleLogin);
+
+      /* 退出登录 */
+      $("#logoutBtn").addEventListener("click", handleLogout);
+
+      /* 修改密码 */
+      $("#changePasswordBtn").addEventListener("click", openPasswordModal);
+      $("#cancelPasswordBtn").addEventListener("click", closePasswordModal);
+      $("#submitPasswordBtn").addEventListener("click", handleChangePassword);
+
+      /* 修改密码弹窗点击遮罩关闭 */
+      elements.passwordModalMask.addEventListener("click", (event) => {
+        if (event.target === elements.passwordModalMask) closePasswordModal();
+      });
+
+      /* 主应用按钮 */
+      $("#newBtn").addEventListener("click", () => openModal());
+      $("#closeModalBtn").addEventListener("click", closeModal);
+      $("#cancelBtn").addEventListener("click", closeModal);
+      $("#exportBtn").addEventListener("click", exportData);
+      $("#importBtn").addEventListener("click", () => elements.importFile.click());
+      $("#clearCurrentBtn").addEventListener("click", clearCurrentRecords);
+      elements.recordForm.addEventListener("submit", handleSubmit);
+
+      /* 分类和模块切换 */
+      elements.categoryInput.addEventListener("change", updateSubmoduleOptions);
+      elements.submoduleInput.addEventListener("change", toggleCourseFields);
+
+      /* 标签和课程主题 */
+      elements.tagsInput.addEventListener("input", renderTagOptions);
+      elements.tagsInput.addEventListener("blur", () => {
+        elements.tagsInput.value = normalizeTagString(elements.tagsInput.value);
+        renderTagOptions();
+      });
+      elements.courseThemeInput.addEventListener("input", renderCourseThemeOptions);
+      elements.courseThemeInput.addEventListener("blur", () => {
+        elements.courseThemeInput.value = elements.courseThemeInput.value.trim();
+        renderCourseThemeOptions();
+      });
+
+      /* 附件上传 */
+      elements.attachmentInput.addEventListener("change", (event) => handleAttachmentFiles(event.target.files));
+      elements.activityAttachmentInput.addEventListener("change", (event) => handleAttachmentFiles(event.target.files));
+      elements.counselingAttachmentInput.addEventListener("change", (event) => handleAttachmentFiles(event.target.files));
+
+      /* 导入备份 */
+      elements.importFile.addEventListener("change", (event) => {
+        const file = event.target.files[0];
+        if (file) importData(file);
+      });
+
+      /* 搜索和筛选：使用防抖，通过 API 在后端执行 */
+      [elements.searchInput, elements.statusFilter, elements.priorityFilter, elements.dateFilter].forEach((input) => {
+        input.addEventListener("input", handleFilterChange);
+        input.addEventListener("change", handleFilterChange);
+      });
+
+      /* 弹窗遮罩点击关闭 */
+      elements.modalMask.addEventListener("click", (event) => {
+        if (event.target === elements.modalMask) closeModal();
+      });
+
+      /* ESC 键关闭弹窗 */
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          if (elements.modalMask.classList.contains("show")) closeModal();
+          if (elements.passwordModalMask.classList.contains("show")) closePasswordModal();
+        }
+      });
+    }
+
+    /* ==================== 统一渲染函数 ==================== */
+
+    function render() {
+      renderNavigation();
+      renderMetrics();
+      renderPageHeader();
+      renderSubmodules(getCategory(state.selectedCategory));
+      renderRecords();
+    }
+
+    /* ==================== 初始化 ==================== */
+
+    /**
+     * 应用初始化
+     * 检查 token 是否存在，存在则直接进入主应用，否则显示登录页
+     */
+    async function init() {
+      bindEvents();
+
+      const token = getToken();
+      if (token) {
+        /* 有 token，尝试加载主应用 */
+        showAppPage();
+        showLoading();
+        try {
+          await loadRecords();
+          render();
+        } catch (error) {
+          console.warn("初始化加载失败：", error);
+        } finally {
+          hideLoading();
+        }
+      } else {
+        /* 没有 token，显示登录页 */
+        showLoginPage();
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
